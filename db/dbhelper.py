@@ -17,12 +17,16 @@ def getprocess(sql,vals:list=[])->list:
     return data 
         
 def postprocess(sql:str,vals:list=[])->bool:
-    conn:any = connect(database)
-    cursor:any = conn.cursor()
-    cursor.execute(sql,vals)
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        conn:any = connect(database)
+        cursor:any = conn.cursor()
+        cursor.execute(sql,vals)
+        conn.commit()
+    except Exception as e:
+        print(f"Error : {e}")
+    finally:
+        cursor.close()
+        conn.close()
     return True if cursor.rowcount>0 else False
 
 #crud
@@ -43,11 +47,11 @@ def getrecord(table:str,**kwargs)->list:
 def addrecord(table:str,**kwargs)->bool:
     keys:list = list(kwargs.keys())
     vals:list = list(kwargs.values())
-    qmark:list = ['?']*len(vals)
-    dta:str = ",".join(qmark)
-    fields:str ="`,`".join(keys)
-    sql:str = f"INSERT INTO `{table}`(`{fields}`) VALUES({dta})"
-    return postprocess(sql,vals)
+    dats:list = ['?']*len(keys)
+    datstring:str = ",".join (dats)
+    fields:str = "`,`".join(keys)
+    sql:str = f"INSERT INTO `{table}` (`{fields}`) VALUES {datstring}"
+    return getprocess(sql,vals)
     
 def deleterecord(table:str,**kwargs)->bool:
     keys:list = list(kwargs.keys())
@@ -64,18 +68,9 @@ def updaterecord(table:str,**kwargs)->bool:
     vals:list = list(kwargs.values())
     newvals:list = []
     flds:list = []
-    for index in range(1,len(vals)):
-        flds.append(f"`{keys[index]}`=?")
+    for index in range(1,len(keys)):
+        flds.append(f"`{keys}`=?")
         newvals.append(f"{vals[index]}")
     fields:str = ",".join(flds)   
     sql:str = f"UPDATE `{table}` SET {fields} WHERE `{keys[0]}`='{vals[0]}'"
     return postprocess(sql,newvals)
-
-
-def main()->None:
-    students:list = getall('students')
-    for student in students:
-        print(f"{student ['idno']} {student ['lastname']} {student ['firstname']}")
-
-if __name__ == "__main__":
-    main()
