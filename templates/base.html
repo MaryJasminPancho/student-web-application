@@ -12,11 +12,32 @@
             <h4>Student Management v1.0</h4>
         </div>
         <div class="w3-container w3-padding">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="w3-panel {% if category == 'error' %}w3-red{% else %}w3-green{% endif %} w3-padding w3-animate-opacity flash-message">
+                            <span onclick="this.parentElement.style.display='none'" class="w3-display-topright">&times;</span>
+                            {{message}}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             {% block content %}
             {% endblock %}
         </div>
         <center>
             &copy; MARY JASMIN S. PANCHO, 2025
         </center>
+        <scripts>
+            setTimeout(function() {
+                const messages = document.querySelectorAll('.flash-message')
+                messages.forEach(msg => {
+                    msg.style.transition = "opacity 0.8s ease";
+                    msg.style.opacity = "0";
+                    setTimeout(() => msg.remove(), 800);
+                });
+            }, 3000);
+        </scripts>
     </body>
 </html>

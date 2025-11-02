@@ -50,8 +50,8 @@ def addrecord(table:str,**kwargs)->bool:
     dats:list = ['?']*len(keys)
     datstring:str = ",".join (dats)
     fields:str = "`,`".join(keys)
-    sql:str = f"INSERT INTO `{table}` (`{fields}`) VALUES {datstring}"
-    return getprocess(sql,vals)
+    sql:str = f"INSERT INTO `{table}` (`{fields}`) VALUES ({datstring})"
+    return postprocess(sql,vals)
     
 def deleterecord(table:str,**kwargs)->bool:
     keys:list = list(kwargs.keys())
@@ -63,14 +63,27 @@ def deleterecord(table:str,**kwargs)->bool:
     sql:str = f"DELETE FROM `{table}` WHERE {fields}"
     return postprocess(sql,vals)
     
-def updaterecord(table:str,**kwargs)->bool:
-    keys:list = list(kwargs.keys())
-    vals:list = list(kwargs.values())
-    newvals:list = []
-    flds:list = []
-    for index in range(1,len(keys)):
-        flds.append(f"`{keys}`=?")
-        newvals.append(f"{vals[index]}")
-    fields:str = ",".join(flds)   
-    sql:str = f"UPDATE `{table}` SET {fields} WHERE `{keys[0]}`='{vals[0]}'"
-    return postprocess(sql,newvals)
+# def updaterecord(table:str,**kwargs)->bool:
+#     keys:list = list(kwargs.keys())
+#     vals:list = list(kwargs.values())
+#     newvals:list = []
+#     flds:list = []
+#     for index in range(1,len(keys)):
+#         flds.append(f"`{keys[index]}`=?")
+#         newvals.append({vals[index]})
+#     fields:str = ",".join(flds)   
+#     sql = f"UPDATE `{table}` SET {fields} WHERE `{keys[0]}`=?"
+#     newvals.append(vals[0])
+#     return postprocess(sql,newvals)
+
+def updaterecord(table: str, where: dict, **kwargs) -> bool:
+    keys = list(kwargs.keys())
+    vals = list(kwargs.values())
+    sets = ",".join([f"`{k}`=?" for k in keys])
+
+    w_keys = list(where.keys())
+    w_vals = list(where.values())
+    w_clause = " AND ".join([f"`{k}`=?" for k in w_keys])
+
+    sql = f"UPDATE `{table}` SET {sets} WHERE {w_clause}"
+    return postprocess(sql, vals + w_vals)

@@ -6,7 +6,7 @@
             <div class="w3-card-4 w3-container w3-padding">
                 <fieldset>
                     <legend><b>STUDENT INFORMATION</b></legend>
-                    <form>
+                    <form action="/add" method="post">
                         <center><img src="{{ url_for('static',filename='images/profile.png') }}"></center>
                         <p>
                             <label><b>IDNO</b></label>
@@ -73,8 +73,8 @@
                     <td class="w3-hide-large">{{ students['course'].upper() }}-{{ students['level'] }}</td>
 
                     <td>
-                        <button>&#128393;</button>
-                        <button>&#128465;</button>
+                        <a href="/edit/{{ students['idno'] }}" style="font-size: 20px;">&#128393;</a href="">
+                        <a href="/delete/{{ students['idno'] }}" style="font-size: 21px;">&#128465;</a href="">
                     </td>
                 </tr>
                 {% endfor %}
