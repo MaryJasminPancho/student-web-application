@@ -5,9 +5,84 @@
         <div class="w3-third">
             <div class="w3-card-4 w3-container w3-padding">
                 <fieldset>
+                    {% if edit_student %}
+                    <legend><b>EDIT STUDENT</b></legend>
+                    <form action="{{ url_for('updatestudent', idno=edit_student.idno) }}" method="post" enctype="multipart/form-data">
+                        <center>
+                            <label for="profile_upload" style="cursor:pointer;">
+                                {% if edit_student %}
+                                    <img id="profilePreview"
+                                        src="{{ url_for('static', filename='images/' + (edit_student['image'] or 'profile.png')) }}"
+                                        style="width:120px;height:120px;border-radius:50%;">
+                                {% else %}
+                                    <img id="profilePreview"
+                                        src="{{ url_for('static', filename='images/profile.png') }}" 
+                                        style="width:120px;height:120px;border-radius:50%;">
+                                {% endif %}
+                            </label>
+                            <br>
+                            <small>Click image to change</small>
+
+                            <input type="file" id="profile_upload" name="profile_pic" accept="image/*" style="display:none;">
+                        </center>
+
+                        <input type="hidden" name="idno" value="{{ edit_student['idno'] }}">
+                        <p>
+                            <label><b>IDNO</b></label>
+                            <input type="number" name="idno" value="{{ edit_student['idno'] }}" class="w3-input w3-border" readonly>
+                        </p>
+
+                        <p>
+                            <label><b>LASTNAME</b></label>
+                            <input type="text" name="lastname" value="{{ edit_student['lastname'] }}" class="w3-input w3-border">
+                        </p>
+
+                        <p>
+                            <label><b>FIRSTNAME</b></label>
+                            <input type="text" name="firstname" value="{{ edit_student['firstname'] }}" class="w3-input w3-border">
+                        </p>
+
+                        <p>
+                            <label><b>COURSE</b></label>
+                            <select name="course" class="w3-input w3-border">
+                                <option value="BSIT" {{ 'selected' if edit_student.course == 'BSIT' else '' }}>INFORMATION TECHNOLOGY</option>
+                                <option value="BSCS" {{ 'selected' if edit_student.course == 'BSCS' else '' }}>COMPUTER SCIENCE</option>
+                                <option value="BSCPE" {{ 'selected' if edit_student.course == 'BSCPE' else '' }}>COMPUTER ENGINEERING</option>
+                                <option value="BSHM" {{ 'selected' if edit_student.course == 'BSHM' else '' }}>HOSPITALITY MANAGEMENT</option>
+                                <option value="BSCJ" {{ 'selected' if edit_student.course == 'BSCJ' else '' }}>CRIMINAL JUSTICE</option>
+                            </select>
+                        </p>
+
+                        <p>
+                            <label><b>LEVEL</b></label>
+                            <select name="level" class="w3-input w3-border">
+                                <option value="1" {{ 'selected' if edit_student.level == '1' else '' }}>FIRST YEAR</option>
+                                <option value="2" {{ 'selected' if edit_student.level == '2' else '' }}>SECOND YEAR</option>
+                                <option value="3" {{ 'selected' if edit_student.level == '3' else '' }}>THIRD YEAR</option>
+                                <option value="4" {{ 'selected' if edit_student.level == '4' else '' }}>FOURTH YEAR</option>
+                            </select>
+                        </p>
+
+                        <p class="w3-right">
+                            <input type="submit" value="UPDATE" class="w3-button w3-blue">
+                            <a href="/" class="w3-button w3-green">CANCEL</a>
+                        </p>
+                    </form>
+
+                    {% else %}
                     <legend><b>STUDENT INFORMATION</b></legend>
-                    <form action="/add" method="post">
-                        <center><img src="{{ url_for('static',filename='images/profile.png') }}"></center>
+                    <form action="/add" method="post" enctype="multipart/form-data">
+                        <center>
+                            <label for="profile_upload" style="cursor:pointer;">
+                                <img id="profilePreview"
+                                     src="{{ url_for('static',filename='images/profile.png') }}"
+                                     style="width:120px;height:120px;border-radius:50%;">
+                            </label>
+                            <br>
+                            <small>Click image to change</small>
+
+                            <input type="file" id="profile_upload" name="profile_pic" accept="image/*" style="display:none;">
+                        </center>
                         <p>
                             <label><b>IDNO</b></label>
                             <input type="number" name="idno" id="idno" class="w3-input w3-border">
@@ -44,9 +119,24 @@
                             <input type="reset" value="CANCEL" class="w3-button w3-green">
                         </p>
                     </form>
+                    {% endif %}
                 </fieldset>
             </div>
         </div>
+
+        <script>
+            document.getElementById('profile_upload').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profilePreview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
+
         <div class="w3-twothird w3-container">
             <table class="w3-table-all w3-card-4">
                 <tr>
