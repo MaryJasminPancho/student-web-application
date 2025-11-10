@@ -94,17 +94,9 @@ def updatestudent(idno):
     else:
         new_filename = old_image
 
-
     if not lastname or not firstname:
         flash("Fields cannot be empty!", "error")
         return redirect("/")
-    
-    # image = request.files.get('profile_pic')
-
-    # if image and image.filename.strip() != "":
-    #     filename = secure_filename(f"{idno}_{image.filename}")
-    #     save_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename)
-    #     image.save(save_path)
 
     updaterecord("students", where={"idno":idno}, lastname=lastname, firstname=firstname, course=course, level=level, image=new_filename)
     flash("Student updated successful", "success")

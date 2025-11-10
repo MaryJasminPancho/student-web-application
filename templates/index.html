@@ -13,11 +13,11 @@
                                 {% if edit_student %}
                                     <img id="profilePreview"
                                         src="{{ url_for('static', filename='images/' + (edit_student['image'] or 'profile.png')) }}"
-                                        style="width:120px;height:120px;border-radius:50%;">
+                                        style="width:120px;height:120px;border-radius:50%;object-fit: cover; object-position: center;">
                                 {% else %}
                                     <img id="profilePreview"
                                         src="{{ url_for('static', filename='images/profile.png') }}" 
-                                        style="width:120px;height:120px;border-radius:50%;">
+                                        style="width:200px;height:200px;border-radius:50%;">
                                 {% endif %}
                             </label>
                             <br>
